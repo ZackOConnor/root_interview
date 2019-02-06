@@ -92,9 +92,13 @@ def report(driver_dict):
     # applies the msg function to every row
     driver_df.apply(create_msg, axis=1)
 
-# takes the file path given from the command prompt
-file_path = sys.argv[1]
-# processes and aggregate by driver the .txt file
-commands = CommandProcessor(file_path).process()
-# sorts and prints driver data to the command prompt 
-report(commands)
+def main():
+    # takes the file path given from the command prompt
+    file_path = sys.argv[1]
+    # processes and aggregate by driver the .txt file
+    commands = CommandProcessor(file_path).process()
+    # sorts and prints driver data to the command prompt 
+    report(commands)
+    
+if __name__ == "__main__":
+    main()
