@@ -1,2 +1,20 @@
-# root_interview
-Interview problem from Root
+# Root Interview
+
+I started the problem like every problem. I broke the problem into the problem statement, conditions, and requirements. 
+
+Problem statement: Take in an .txt file and output an aggregated, sorted, list of drivers and their trip information
+Conditions: I choose a .txt in the command line, because I'm more familiar with that kind of input. Trip average mph must be between 5 and 100 mph, format of the commands, and the format of the timestamps.
+Requirements: Output format aggregated by driver, sorted descending by miles driven, include mph, and for 0 miles drivers don't included mph
+
+I understood the problem to be input a file, process it, and spit out a report. So, I wanted the user to only need to do those three steps to run the program. I modeled this process in my code, I created a class CommandProcessor to model inputting a file, a process method with in the class, and a report outside of the class. I chose to exclude the report method because it felt like a nature evolution to build a larger report class that could house different specific report methods if needed. Also, it seemed like more commands could be needed in the future, so I wanted to build in a structure that could easily handle adding and deleting valid commands.
+
+Finding the right data structure to use was a bit of an internal debate. Ultimately, I considered three lists, dictionaries, and data frames. 
+I decided against list, because keeping track of a list of lists seemed error prone and looking up a driver would be expensive. A dictionary with drivers as a Key and a list of values as the value, had a cheap look up but sorting and reporting the data would be complex, finally a data frame would have an expensive look up and would be easy to sort and report out the data, but creating and updating the data would be inefficient. I decided to use a dict with in CommandProceesor to keep track of the data and use Pandas to read it into a data frame in the report method. This seemed the best solution, cheap look ups and simple data updates while also creating a simple reporting process.
+
+I created a constructor with in CommandProcessor to set up the driver_dict, valid command list, and open the file. I created a process method that iterated through each line of the file, ran the lines through a parser, and sent the line to run_command. Here is where I created the ability to handle new commands. Instead of just using if else to run Trip or Driver, I built a method that takes the command from the parsed line, checked it against the valid command list, and runs the matching method. I also think this is a more logical way to lay out the code and to add a new command you just added it to the valid command list in the __init__, create the method, and name it appropriately.
+
+The driver method raised and warning if the driver already existed, then added a new key/value pair to driver_dict if it didn't. The Trip method was a bit more complex, it raised an error and stopped the program if the driver didn't exist, then concerted the elapsed time into minutes. The 24-hour format and not spanning day reduce complexity and I decided to convert everything into minutes since that was the lowest level of information given and it eliminated the 60 minutes to 1-hour issue. Then I calculated mile per hour (miles per minutes * 60) and checked it against the condition between 5 and 100 mph. I added the information to the matching driver in driver_dict as list elapsed minutes, miles driven. 
+
+After processor was ran there exists a dict of all drivers and their summed trip information. The user simply called report passing in the driver_dict. The dict it read into a data frame, rounded to the nearest integer, sorted, and average mph is calculated and added. Now that the data frame is formatted correctly, I just ran an over each row of the data frame to print out the data in the required format. 
+
+Testing was straight forward for most of the methods, I wrote unit test to test every aspect of the methods and mock test to make sure run_command was calling the correct methods. For me testing the console output was new, I had to find and use new libraries I hadn't used before. I got them working and it allowed me to test report's output and write end to end test.
