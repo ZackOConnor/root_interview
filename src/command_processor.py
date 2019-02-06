@@ -33,6 +33,8 @@ class CommandProcessor:
         """
         # gets the command from the parsed line
         command = parsed_line[0]
+        if command not in self.valid_command_list:
+            raise ValueError("{} is not a vaild command. Vaild commands are {}".format(command, self.valid_command_list))
         command = command.lower()
         # runs the appropriate method of the CommandProcessor class based on the command parameter
         run_command = getattr(CommandProcessor, '_' + command)
@@ -61,6 +63,8 @@ class CommandProcessor:
         """Calculates the elapsed time in minutes and miles driven and adds them to driver_dict based on driver name
         if the average MPH for the trip is between 5 and 100 MPH
         """
+        if driver not in self.driver_dict.keys():
+            raise ValueError("{} does not exists as a driver".format(driver))
         frmt = '%H:%M'  # time format
         start_time = datetime.strptime(parsed_line[2], frmt)
         end_time = datetime.strptime(parsed_line[3], frmt)
@@ -90,7 +94,9 @@ def report(driver_dict):
             created_msg += " @ {} mph".format(driver_info[2])
         print(created_msg)
     # applies the msg function to every row
-    driver_df.apply(create_msg, axis=1)
+    formatted_driver_dict = driver_df.apply(create_msg, axis=1)
+    return formatted_driver_dict
+
 
 def main():
     # takes the file path given from the command prompt
@@ -99,6 +105,6 @@ def main():
     commands = CommandProcessor(file_path).process()
     # sorts and prints driver data to the command prompt 
     report(commands)
-    
+
 if __name__ == "__main__":
     main()
